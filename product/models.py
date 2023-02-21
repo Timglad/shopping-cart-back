@@ -13,10 +13,18 @@ class Product(models.Model):
                               default='/placeholder.png')
     archived = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.name, self.description,self.price
+
 
 class CartItem(models.Model):
-     product = models.ForeignKey(Product,on_delete=models.CASCADE)
-     quantiy = models.IntegerField(default=1)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    def __str__(self):
+        return self.name, self.quantity
+
+
 
 # class Order
 # DateField
