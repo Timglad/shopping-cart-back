@@ -14,15 +14,14 @@ class Product(models.Model):
     archived = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.name, self.description,self.price
+        return self.name
 
 
 class CartItem(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
 
-    def __str__(self):
-        return self.name, self.quantity
+ 
 
 
 
