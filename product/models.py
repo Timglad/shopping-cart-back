@@ -11,14 +11,12 @@ class Product(models.Model):
     updated = models.DateField(auto_now=True)
     image = models.ImageField(null=True, blank=True,
                               default='/placeholder.png')
+    archived = models.BooleanField(default=False)
 
 
-# class CartItem(models.Model):
-#     user
-#     product = models.ForeignKey(Product)
-#     quantiy = models.IntegerField()
-#     isActiveCart = True
-#     order_id = 
+class CartItem(models.Model):
+     product = models.ForeignKey(Product,on_delete=models.CASCADE)
+     quantiy = models.IntegerField(default=1)
 
 # class Order
 # DateField
