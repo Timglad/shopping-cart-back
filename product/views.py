@@ -15,17 +15,18 @@ def products(request):
     """
     if request.method == 'GET' : # list products
         products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
-
-        return Response(serializer.data)
+        products_serializer = ProductSerializer(products, many=True)
+        return Response(products_serializer.data)
 
     elif request.method == 'POST': # create new product
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+        products_serializer  = ProductSerializer(data=request.data)
+        if products_serializer .is_valid():
+            products_serializer.save()
+            return Response(products_serializer .data, status=status.HTTP_201_CREATED)
+        return Response(products_serializer .errors, status=status.HTTP_400_BAD_REQUEST)    
     
+
+   
 class ProductDetail(APIView):
     """
     Retrieve, update or delete a snippet instance.
