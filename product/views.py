@@ -39,16 +39,16 @@ class ProductDetail(APIView):
 
     def get(self, request, pk, format=None):
         product = self.get_object(pk)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
+        products_serializer = ProductSerializer(product)
+        return Response(products_serializer.data)
 
     def put(self, request, pk, format=None):
         product = self.get_object(pk)
-        serializer = ProductSerializer(product, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        products_serializer = ProductSerializer(product, data=request.data)
+        if products_serializer.is_valid():
+            products_serializer.save()
+            return Response(products_serializer.data)
+        return Response(products_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk, format=None):
         product = self.get_object(pk)
@@ -62,17 +62,17 @@ def cart(request):
     """
     List all cart items, or create a new item.
     """
-    if request.method == 'GET': # list products
+    if request.method == 'GET': # list cart 
         cart = CartItem.objects.all()
-        serializer = CartSerializer(cart, many=True)
-        return Response(serializer.data)
+        cart_serializer = CartSerializer_two(cart, many=True)
+        return Response(cart_serializer.data)
 
-    elif request.method == 'POST': # create new product
-        serializer = CartSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+    elif request.method == 'POST': # create new cart
+        cart_serializer = CartSerializer(data=request.data)
+        if cart_serializer.is_valid():
+            cart_serializer.save()
+            return Response(cart_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
     
 class CartDetail(APIView):
     """
