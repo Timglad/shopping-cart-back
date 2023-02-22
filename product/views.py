@@ -14,7 +14,7 @@ def products(request):
     List all products, or create a new product.
     """
     if request.method == 'GET' : # list products
-        products = Product.objects.all()
+        products = Product.objects.filter(archived=False)
         products_serializer = ProductSerializer(products, many=True)
         return Response(products_serializer.data)
 
