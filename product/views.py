@@ -27,15 +27,38 @@ def products(request):
     
 
    
+@api_view(['GET', 'PUT', 'DELETE'])
+def product_detail(request, pk):
+    try:
+        product = Product.objects.get(id=pk)
+    except Product.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    # get product
+    if request.method == 'GET':
+        serializer = ProductSerializer(product, many=False)
+        return Response(serializer.data)
+
+    # archive product(not really deleting it)
+    if request.method == 'DELETE':
+        product.archived = True
+        product.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # update product
+    if request.method == 'PUT':
+        serializer = ProductSerializer(instance=product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+"""
 class ProductDetail(APIView):
-    """
-    Retrieve, update or delete a snippet instance.
-    """
-    def get_object(self, pk):
+    def single_product(request, pk):
         try:
-            return Product.objects.get(pk=pk)
+            product = Product.objects.get(id=pk)
         except Product.DoesNotExist:
-            raise Http404
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
     def get(self, pk):
         product = self.get_object(pk)
@@ -55,7 +78,7 @@ class ProductDetail(APIView):
         product.status = 'AR'
         product.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
+"""
 
 
 @api_view(['GET', 'POST'])
