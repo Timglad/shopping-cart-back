@@ -52,33 +52,6 @@ def product_detail(request, pk):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-"""
-class ProductDetail(APIView):
-    def single_product(request, pk):
-        try:
-            product = Product.objects.get(id=pk)
-        except Product.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-    def get(self, pk):
-        product = self.get_object(pk)
-        products_serializer = ProductSerializer(product)
-        return Response(products_serializer.data)
-
-    def put(self, request, pk):
-        product = self.get_object(pk)
-        products_serializer = ProductSerializer(product, data=request.data)
-        if products_serializer.is_valid():
-            products_serializer.save()
-            return Response(products_serializer.data)
-        return Response(products_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self,pk):
-        product = self.get_object(pk)
-        product.status = 'AR'
-        product.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-"""
 
 
 @api_view(['GET', 'POST'])
@@ -94,34 +67,30 @@ def cart(request):
             cart_serializer.save()
             return Response(cart_serializer.data, status=status.HTTP_201_CREATED)
         return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class CartDetail(APIView):
-    """
-    Retrieve, update or delete a snippet instance.
-    """
-    def get_object(self, pk):
-        try:
-            return CartItem.objects.get(pk=pk)
-        except CartItem.DoesNotExist:
-            raise Http404
 
-    def get(self,pk):
-        cart_item = self.get_object(pk)
-        serializer = CartSerializer(cart_item)
-        return Response(serializer.data)
 
-    def put(self, request, pk):
-        cart_item = self.get_object(pk)
-        serializer = CartSerializer(cart_item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET', 'PUT', 'DELETE'])
+def cart_detail(request, pk):
+    try:
+        cart_item = CartItem.objects.get(id=pk)
+    except CartItem.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-    def delete(self, pk):
-        cart_item = self.get_object(pk)
-        cart_item.delete()
+    # get product
+    if request.method == 'GET':
+        cart_serializer = CartSerializer_two(cart_item, many=False)
+        return Response(cart_serializer.data)
+
+    # archive product(not really deleting it)
+    if request.method == 'DELETE':
+        cart_item.archived = True
+        cart_item.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
 
-
+    # update product
+    if request.method == 'PUT':
+        cart_serializer = CartSerializer_two(instance=cart_item, data=request.data)
+        if cart_serializer.is_valid():
+            cart_serializer.save()
+            return Response(cart_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(cart_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
