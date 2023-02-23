@@ -81,10 +81,8 @@ def cart_detail(request, pk):
         cart_serializer = CartSerializer_two(cart_item, many=False)
         return Response(cart_serializer.data)
 
-    # archive product(not really deleting it)
     if request.method == 'DELETE':
-        cart_item.archived = True
-        cart_item.save()
+        cart_item.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     # update product
